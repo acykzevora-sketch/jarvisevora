@@ -24,14 +24,36 @@ display:flex;
 justify-content:center;
 }
 
+body{
+    cursor:none;
+    user-select:none;
+    touch-action:none;
+}
+body{
+    margin:0;
+    overflow:hidden;
+}
+
 .dashboard{
-width:100%;
-max-width:450px;
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    gap:20px;
+    height:100vh;
+}
+
+.dashboard{
+    width:100%;
+    max-width:none;
+    padding:20px;
 }
 
 .header{
-text-align:center;
-padding-top:10px;
+    grid-column:2;
+    text-align:center;
+}
+
+.robot-section{
+    grid-column:2;
 }
 
 .title{
@@ -290,9 +312,6 @@ to{transform:rotate(0deg);}
 Good Morning, Syahirah
 </div>
 
-<div class="status" id="status">
-AI ONLINE
-</div>
 
 <div class="card">
 <div class="card-title">
