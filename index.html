@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>J.A.R.V.I.S</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Segoe UI, sans-serif;
+}
+
+body{
+background:
+radial-gradient(circle at center,#0f172a,#020617);
+color:#67e8f9;
+min-height:100vh;
+padding:15px;
+display:flex;
+justify-content:center;
+}
+
+.dashboard{
+width:100%;
+max-width:450px;
+}
+
+.header{
+text-align:center;
+padding-top:10px;
+}
+
+.title{
+font-size:32px;
+font-weight:700;
+letter-spacing:6px;
+}
+
+.subtitle{
+font-size:12px;
+letter-spacing:2px;
+color:#38bdf8;
+margin-top:5px;
+}
+
+.clock{
+font-size:36px;
+font-weight:bold;
+margin-top:20px;
+}
+
+.date{
+font-size:14px;
+opacity:.8;
+}
+
+.robot-section{
+display:flex;
+justify-content:center;
+margin-top:25px;
+position:relative;
+}
+
+<div class="card">
+
+    <div class="card-title">
+        TODAY'S MISSIONS
+    </div>
+
+    <textarea
+        id="missionsInput"
+        rows="5"
+        style="width:100%;padding:10px;border-radius:10px;background:#0f172a;color:white;"
+    ></textarea>
+
+    <button onclick="saveMissions()"
+        class="mic-btn"
+        style="margin-top:10px;">
+        Save Missions
+    </button>
+
+</div>
+
+<div class="card">
+
+    <div class="card-title">
+        UPCOMING EVENTS
+    </div>
+
+    <textarea
+        id="eventsInput"
+        rows="5"
+        style="width:100%;padding:10px;border-radius:10px;background:#0f172a;color:white;"
+    ></textarea>
+
+    <button onclick="saveEvents()"
+        class="mic-btn"
+        style="margin-top:10px;">
+        Save Events
+    </button>
+
+</div>
+.robot-section{
+display:flex;
+justify-content:center;
+align-items:center;
+margin-top:25px;
+position:relative;
+}
+
+.ring{
+width:240px;
+height:240px;
+border:2px solid #22d3ee;
+border-radius:50%;
+position:relative;
+display:flex;
+justify-content:center;
+align-items:center;
+overflow:hidden;
+
+animation:spin 18s linear infinite;
+
+box-shadow:
+0 0 15px #22d3ee,
+0 0 60px rgba(34,211,238,.3);
+}
+
+.ring::before{
+content:'';
+position:absolute;
+
+width:190px;
+height:190px;
+
+border-radius:50%;
+border:2px dashed rgba(255,255,255,.2);
+
+animation:spinreverse 12s linear infinite;
+}
+
+.core{
+width:100px;
+height:100px;
+border-radius:50%;
+background:#22d3ee;
+
+box-shadow:
+0 0 20px #22d3ee,
+0 0 50px #22d3ee,
+0 0 100px #22d3ee;
+
+animation:pulse 2s ease-in-out infinite;
+}
+
+/* ADD THIS BELOW .core */
+
+#robotGif{
+width:100%;
+height:100%;
+object-fit:cover;
+border-radius:50%;
+}
+
+
+
+.greeting{
+text-align:center;
+margin-top:20px;
+font-size:18px;
+}
+
+.status{
+text-align:center;
+margin-top:5px;
+font-size:13px;
+color:#22c55e;
+}
+
+.mic-container{
+text-align:center;
+margin-top:20px;
+}
+
+.mic-btn{
+padding:14px 24px;
+border:none;
+border-radius:30px;
+font-size:15px;
+font-weight:bold;
+cursor:pointer;
+background:#22d3ee;
+color:#000;
+box-shadow:0 0 20px #22d3ee;
+}
+
+.card{
+background:rgba(15,23,42,.8);
+border:1px solid rgba(103,232,249,.25);
+border-radius:18px;
+padding:15px;
+margin-top:15px;
+backdrop-filter:blur(10px);
+}
+
+.card-title{
+font-size:12px;
+letter-spacing:2px;
+margin-bottom:10px;
+color:#22d3ee;
+}
+
+.item{
+padding:8px 0;
+border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+.bottom-grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+}
+
+.progress{
+height:10px;
+background:#0f172a;
+border-radius:99px;
+overflow:hidden;
+margin-top:10px;
+}
+
+.progress-fill{
+height:100%;
+width:82%;
+background:#22d3ee;
+box-shadow:0 0 20px #22d3ee;
+}
+
+.footer{
+text-align:center;
+margin-top:20px;
+font-size:12px;
+opacity:.7;
+}
+
+@keyframes pulse{
+0%{transform:scale(1);}
+50%{transform:scale(1.08);}
+100%{transform:scale(1);}
+}
+
+@keyframes spin{
+from{transform:rotate(0deg);}
+to{transform:rotate(360deg);}
+}
+
+@keyframes spinreverse{
+from{transform:rotate(360deg);}
+to{transform:rotate(0deg);}
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="dashboard">
+
+<div class="header">
+<div class="title">J.A.R.V.I.S</div>
+<div class="subtitle">AI COMMAND CENTRE</div>
+
+<div id="clock" class="clock"></div>
+<div id="date" class="date"></div>
+</div>
+<div class="robot-section">
+    <div class="ring">
+        <div class="core" id="core">
+            <img src="robot.gif" id="robot" alt="Robot">
+        </div>
+    </div>
+</div>
+
+
+<div class="greeting">
+Good Morning, Syahirah
+</div>
+
+<div class="status" id="status">
+AI ONLINE
+</div>
+
+<div class="card">
+<div class="card-title">
+TODAY'S MISSIONS
+</div>
+
+<div class="item">✅ Planner Review</div>
+<div class="item">✅ Daily Sync</div>
+<div class="item">⏳ Airport Game Project</div>
+<div class="item">🎯 Personal Learning</div>
+
+</div>
+
+<div class="card">
+<div class="card-title">
+UPCOMING EVENTS
+</div>
+
+<div class="item">09:00 Development Sync</div>
+<div class="item">12:30 Lunch Break</div>
+<div class="item">15:00 Review Session</div>
+
+</div>
+
+<div class="bottom-grid">
+
+<div class="card">
+<div class="card-title">
+WEATHER
+</div>
+
+<div id="weather">
+☀ 32°C
+</div>
+
+</div>
+
+<div class="card">
+<div class="card-title">
+BATTERY
+</div>
+
+<div id="battery">
+Detecting...
+</div>
+
+</div>
+
+</div>
+
+<div class="card">
+<div class="card-title">
+PRODUCTIVITY
+</div>
+
+<div class="progress">
+<div class="progress-fill"></div>
+</div>
+
+<div style="margin-top:8px">
+82% Complete
+</div>
+
+</div>
+
+<div class="footer">
+JARVIS HUD v2.0
+</div>
+
+</div>
+
+<script>
+
+// CLOCK
+
+function updateClock(){
+
+const now = new Date();
+
+clock.innerHTML =
+now.toLocaleTimeString([],{
+hour:'2-digit',
+minute:'2-digit',
+second:'2-digit'
+});
+
+date.innerHTML =
+now.toLocaleDateString(undefined,{
+weekday:'long',
+day:'numeric',
+month:'long',
+year:'numeric'
+});
+}
+
+updateClock();
+setInterval(updateClock,1000);
+
+
+// BATTERY
+
+if('getBattery' in navigator){
+
+navigator.getBattery().then(function(battery){
+
+function updateBattery(){
+
+document.getElementById('battery').innerHTML =
+'🔋 ' + Math.round(battery.level * 100) + '%';
+
+}
+
+updateBattery();
+
+battery.addEventListener('levelchange', updateBattery);
+
+});
+
+}else{
+
+document.getElementById('battery').innerHTML =
+'Battery Unavailable';
+
+}
+
+
+// SPEAK
+function speak(text){
+
+    speechSynthesis.cancel();
+
+    const speech = new SpeechSynthesisUtterance(text);
+
+    speech.lang = "en-US";
+    speech.rate = 1;
+    speech.pitch = 1;
+    speech.volume = 1;
+
+    console.log("Speaking:", text);
+
+    speechSynthesis.speak(speech);
+}
+
+
+// WELCOME
+
+window.addEventListener("load", () => {
+
+    setTimeout(() => {
+
+        const msg = new SpeechSynthesisUtterance();
+        msg.text = "Good morning Syahirah. Have a good day. You may continue focus today and buy chocolates and drink MILO";
+        msg.rate = 1;
+        msg.pitch = 1;
+        msg.volume = 1;
+
+        speechSynthesis.cancel();
+        speechSynthesis.speak(msg);
+
+    }, 1000);
+
+});
+// SPEECH RECOGNITION
+
+const SpeechRecognition =
+window.SpeechRecognition ||
+window.webkitSpeechRecognition;
+
+let recognition;
+
+if(SpeechRecognition){
+
+recognition =
+new SpeechRecognition();
+
+recognition.lang =
+"en-US";
+
+recognition.continuous =
+false;
+
+recognition.interimResults =
+false;
+
+recognition.onstart = ()=>{
+
+document.getElementById("status")
+.innerHTML = "LISTENING...";
+
+document.getElementById("core")
+.style.background = "#22c55e";
+
+};
+
+recognition.onend = ()=>{
+
+document.getElementById("status")
+.innerHTML = "AI ONLINE";
+
+document.getElementById("core")
+.style.background = "#22d3ee";
+
+};
+
+recognition.onresult = (event)=>{
+
+    const command =
+    event.results[0][0].transcript.toLowerCase();
+
+    handleCommand(command);
+
+};
+}
+function handleCommand(command){
+
+    command = command.toLowerCase();
+
+    if(
+        command.includes("hey jarvis") ||
+        command.includes("jarvis")
+    ){
+        speak("Yes Syahirah? How can I help you?");
+    }
+
+    else if(command.includes("time")){
+        speak(
+            "The current time is " +
+            new Date().toLocaleTimeString()
+        );
+    }
+
+    else if(command.includes("mission")){
+        readMissions();
+    }
+
+    else if(
+        command.includes("event") ||
+        command.includes("meeting")
+    ){
+        readEvents();
+    }
+
+    else if(command.includes("battery")){
+        const batteryText =
+        document.getElementById("battery").innerText;
+
+        speak(
+            "Current battery level is " +
+            batteryText
+        );
+    }
+
+    else{
+        speak(
+            "What time lunch today or tak makan kan?"
+        );
+    }
+}
+function startJarvis(){
+
+    if(recognition){
+        recognition.start();
+    }
+    else{
+        alert("Voice recognition not supported.");
+    }
+}
+</script>
+
+
+
+</body>
+</html>
